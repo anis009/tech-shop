@@ -1,28 +1,50 @@
-import RootLayout from "@/components/Layouts/RootLayout";
+import { Product } from "@/components/UI/Product";
+import RootLayout from "../components/Layouts/RootLayout";
 import React from "react";
 
-const HomePage = () => {
+const HomePage = ({ products }) => {
+	console.log("products~", products);
 	return (
-		<div>
-			<p>
-				Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
-				pariatur corporis repudiandae ipsa, porro doloribus itaque eius at dolor
-				eaque iste cupiditate rem, dolorem quis? Quia quisquam accusantium
-				delectus maiores, magnam, quo dignissimos qui adipisci earum suscipit
-				velit recusandae dolor, illo odio vero! Necessitatibus totam maiores
-				nemo esse placeat veritatis blanditiis quis eaque, nesciunt animi
-				distinctio nisi tempora? Doloremque quidem dignissimos labore dolores
-				nulla excepturi accusamus laboriosam voluptate rerum nisi? Minima
-				excepturi vitae tenetur natus ut suscipit necessitatibus cumque,
-				voluptas ipsa vel facere, minus quisquam, commodi neque aperiam? Eaque
-				dicta neque, veritatis itaque assumenda error mollitia aperiam nesciunt
-				ipsum eius?
-			</p>
+		<div className="px-5">
+			<h1 className="my-3 text-3xl font-semibold text-gray-800">
+				Latest Products{" "}
+			</h1>
+			<div className="grid grid-cols-3 gap-4 my-4">
+				{products?.map((product, index) => (
+					<Product key={index} product={product} />
+				))}
+			</div>
 		</div>
 	);
 };
 
 export default HomePage;
+
 HomePage.getLayout = function getLayout(page) {
 	return <RootLayout>{page}</RootLayout>;
 };
+export async function getStaticProps() {
+	try {
+		const res = await fetch(
+			"https://tech-shop-server-five.vercel.app/products"
+		);
+		if (!res.ok) {
+			throw new Error(`Fetch failed with status: ${res.status}`);
+		}
+		const products = await res.json();
+		return {
+			props: {
+				products: products?.data || [],
+			},
+			revalidate: 5,
+		};
+	} catch (error) {
+		console.error("Fetch error:", error);
+		return {
+			props: {
+				products: [],
+			},
+			revalidate: 5,
+		};
+	}
+}
