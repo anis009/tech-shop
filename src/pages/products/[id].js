@@ -1,12 +1,9 @@
 import RootLayout from "@/components/Layouts/RootLayout";
 import { Rating } from "@/components/UI/Rating";
 import Image from "next/image";
-import { useRouter } from "next/router";
 import React from "react";
 
 const ProductDetailsPage = ({ product }) => {
-	const router = useRouter();
-
 	return (
 		<div>
 			{product ? (
@@ -63,7 +60,6 @@ const ProductDetailsPage = ({ product }) => {
 	);
 };
 
-export default ProductDetailsPage;
 ProductDetailsPage.getLayout = function getLayout(page) {
 	return <RootLayout>{page}</RootLayout>;
 };
@@ -86,12 +82,19 @@ export async function getStaticPaths() {
 
 //! This also gets called at build time
 export async function getStaticProps(context) {
-	const { params } = context;
-	// console.log("params~", params);
-	const res = await fetch(
-		`https://tech-shop-server-five.vercel.app/products/${params.id}/`
-	);
-	const product = await res.json();
-	// console.log("product~", product);
-	return { props: { product: product?.data }, revalidate: 5 };
+	try {
+		const { params } = context;
+		// console.log("params~", params);
+		const res = await fetch(
+			`https://tech-shop-server-five.vercel.app/products/${params.id}/`
+		);
+		const product = await res.json();
+		// console.log("product~", product);
+		return { props: { product: product?.data }, revalidate: 5 };
+	} catch (error) {
+		console.error("API request error:", error);
+		return { props: { product: null } };
+	}
 }
+
+export default ProductDetailsPage;

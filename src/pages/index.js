@@ -1,6 +1,7 @@
 import { Product } from "@/components/UI/Product";
 import RootLayout from "../components/Layouts/RootLayout";
 import React from "react";
+import Category from "@/components/UI/Category";
 
 const HomePage = ({ products }) => {
 	console.log("products~", products);
@@ -14,6 +15,7 @@ const HomePage = ({ products }) => {
 					<Product key={index} product={product} />
 				))}
 			</div>
+			<Category />
 		</div>
 	);
 };
